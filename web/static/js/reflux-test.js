@@ -1,5 +1,8 @@
-var Reflux = require('../src');
+import React from "bower_components/react/react";
+import Reflux from "bower_components/reflux/dist/reflux";
 
+
+console.log("testing 123");
 // Creating an Action
 var textUpdate = Reflux.createAction();
 var statusUpdate = Reflux.createAction();

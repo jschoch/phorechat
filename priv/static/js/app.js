@@ -12011,16 +12011,25 @@ module.exports = exports["default"];
 });
 
 ;require.register("web/static/js/reflux-test", function(exports, require, module) {
-'use strict';
+"use strict";
 
-var Reflux = require('../src');
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
+var _bower_componentsReactReact = require("bower_components/react/react");
+
+var _bower_componentsReactReact2 = _interopRequireDefault(_bower_componentsReactReact);
+
+var _bower_componentsRefluxDistReflux = require("bower_components/reflux/dist/reflux");
+
+var _bower_componentsRefluxDistReflux2 = _interopRequireDefault(_bower_componentsRefluxDistReflux);
+
+console.log("testing 123");
 // Creating an Action
-var textUpdate = Reflux.createAction();
-var statusUpdate = Reflux.createAction();
+var textUpdate = _bower_componentsRefluxDistReflux2["default"].createAction();
+var statusUpdate = _bower_componentsRefluxDistReflux2["default"].createAction();
 
 // Creating a Data Store - Listening to textUpdate action
-var textStore = Reflux.createStore({
+var textStore = _bower_componentsRefluxDistReflux2["default"].createStore({
     init: function init() {
         this.listenTo(textUpdate, this.output);
     },
@@ -12037,7 +12046,7 @@ var textStore = Reflux.createStore({
 });
 
 // Creating a DataStore
-var statusStore = Reflux.createStore({
+var statusStore = _bower_componentsRefluxDistReflux2["default"].createStore({
     init: function init() {
         this.listenTo(statusUpdate, this.output);
     },
@@ -12048,7 +12057,7 @@ var statusStore = Reflux.createStore({
 });
 
 // Creating an aggregate DataStore that is listening to textStore and statusStore
-var storyStore = Reflux.createStore({
+var storyStore = _bower_componentsRefluxDistReflux2["default"].createStore({
     init: function init() {
         this.listenTo(statusStore, this.statusChanged);
         this.listenTo(textStore, this.textUpdated);
