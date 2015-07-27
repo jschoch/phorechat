@@ -109,6 +109,7 @@
   require.brunch = true;
   globals.require = require;
 })();
+require.register("bower_components/jquery/dist/jquery", function(exports, require, module) {
 /*!
  * jQuery JavaScript Library v2.1.4
  * http://jquery.com/
@@ -1563,6 +1564,9 @@ _$=window.$;jQuery.noConflict = function(deep){if(window.$ === jQuery){window.$ 
 // (#7102#comment:10, https://github.com/jquery/jquery/pull/557)
 // and CommonJS for browser emulators (#13566)
 if(typeof noGlobal === strundefined){window.jQuery = window.$ = jQuery;}return jQuery;}); // Otherwise append directly
+});
+
+require.register("bower_components/bootstrap/dist/js/bootstrap", function(exports, require, module) {
 /*!
  * Bootstrap v3.3.5 (http://getbootstrap.com)
  * Copyright 2011-2015 Twitter, Inc.
@@ -3719,6 +3723,9 @@ if (typeof jQuery === 'undefined') {
     });
   });
 })(jQuery);
+});
+
+require.register("bower_components/react/react", function(exports, require, module) {
 /**
  * React v0.13.3
  */"use strict";(function(f){if(typeof exports === "object" && typeof module !== "undefined"){module.exports = f();}else if(typeof define === "function" && define.amd){define([],f);}else {var g;if(typeof window !== "undefined"){g = window;}else if(typeof global !== "undefined"){g = global;}else if(typeof self !== "undefined"){g = self;}else {g = this;}g.React = f();}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require == "function" && require;if(!u && a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '" + o + "'");throw (f.code = "MODULE_NOT_FOUND",f);}var l=n[o] = {exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e);},l,l.exports,e,t,n,r);}return n[o].exports;}var i=typeof require == "function" && require;for(var o=0;o < r.length;o++) s(r[o]);return s;})({1:[function(_dereq_,module,exports){ /**
@@ -9441,6 +9448,9 @@ while(!(step = iterator.next()).done) {var entry=step.value;if(entry){child = en
 // This error was thrown as a convenience so that you can use this stack
 // to find the callsite that caused this warning to fire.
 throw new Error(message);}catch(x) {}}};}module.exports = warning;},{"114":114}]},{},[1])(1);});
+});
+
+require.register("bower_components/reflux/dist/reflux", function(exports, require, module) {
 "use strict";
 
 (function (f) {
@@ -10822,6 +10832,9 @@ throw new Error(message);}catch(x) {}}};}module.exports = warning;},{"114":114}]
             };
         }, { "eventemitter3": 1 }] }, {}, [13])(13);
 });
+});
+
+require.register("web/static/vendor/phoenix", function(exports, require, module) {
 (function(/*! Brunch !*/) {
   'use strict';
 
@@ -11988,6 +12001,8 @@ Object.defineProperty(exports, "__esModule", {
 });
  }});
 if(typeof(window) === 'object' && !window.Phoenix){ window.Phoenix = require('phoenix') };
+});
+
 require.register("web/static/js/app", function(exports, require, module) {
 "use strict";
 
