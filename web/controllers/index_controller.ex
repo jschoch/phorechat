@@ -15,7 +15,8 @@ defmodule Phorechat.IndexController do
     render(conn, "index.html")
   end
   def newuser(conn,_params) do
-    render(conn,_params)
+    #render(conn,_params)
+    text  conn, "new user goes here"
   end
 
 end

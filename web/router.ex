@@ -17,6 +17,7 @@ defmodule Phorechat.Router do
 
     get "/", PageController, :index
     get "/chat", IndexController, :index
+    get "/newuser",IndexController, :newuser
   end
 
   # Other scopes may use custom stacks.
