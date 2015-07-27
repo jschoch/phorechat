@@ -33599,34 +33599,78 @@ exports.Ajax = Ajax;
 Ajax.states = { complete: 4 };
 });
 
-;require.register("web/static/js/app", function(exports, require, module) {
-//import {Socket} from "phoenix"
+;require.register("web/static/js/Actions", function(exports, require, module) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _webStaticVendorPhoenix = require("web/static/vendor/phoenix");
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-//import Phoenix from "../../vendor/phoenix";
-//import {Socket} from "../../vendor/phoenix";
-//import {Socket} from "phoenix";
+var _bower_componentsRefluxDistReflux = require("bower_components/reflux/dist/reflux");
 
-// let socket = new Socket("/ws")
-// socket.connect()
-// let chan = socket.chan("topic:subtopic", {})
-// chan.join().receive("ok", chan => {
-//   console.log("Success!")
-// })
+var _bower_componentsRefluxDistReflux2 = _interopRequireDefault(_bower_componentsRefluxDistReflux);
 
-var App = {};
-
-exports["default"] = App;
+exports["default"] = _bower_componentsRefluxDistReflux2["default"].createActions(["join", "joined"]);
 module.exports = exports["default"];
 });
 
-;require.register("web/static/js/reflux-test", function(exports, require, module) {
+require.register("web/static/js/ChatApp", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+var _bower_componentsReactReact = require("bower_components/react/react");
+
+var _bower_componentsReactReact2 = _interopRequireDefault(_bower_componentsReactReact);
+
+var _bower_componentsRefluxDistReflux = require("bower_components/reflux/dist/reflux");
+
+var _bower_componentsRefluxDistReflux2 = _interopRequireDefault(_bower_componentsRefluxDistReflux);
+
+var _storesSocketStore = require("./stores/SocketStore");
+
+var _storesSocketStore2 = _interopRequireDefault(_storesSocketStore);
+
+exports["default"] = _bower_componentsReactReact2["default"].createClass({
+  displayName: "ChatApp",
+
+  mixins: [_bower_componentsRefluxDistReflux2["default"].connect(_storesSocketStore2["default"], "socket")],
+
+  render: function render() {
+
+    return _bower_componentsReactReact2["default"].createElement(
+      "div",
+      null,
+      " react works? "
+    );
+  }
+});
+module.exports = exports["default"];
+});
+
+require.register("web/static/js/app", function(exports, require, module) {
+"use strict";
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+var _bower_componentsReactReact = require("bower_components/react/react");
+
+var _bower_componentsReactReact2 = _interopRequireDefault(_bower_componentsReactReact);
+
+var _ChatApp = require("./ChatApp");
+
+var _ChatApp2 = _interopRequireDefault(_ChatApp);
+
+_bower_componentsReactReact2["default"].render(_bower_componentsReactReact2["default"].createElement(_ChatApp2["default"], null), document.getElementById("chat"));
+});
+
+require.register("web/static/js/reflux-test", function(exports, require, module) {
 "use strict";
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
@@ -33722,5 +33766,61 @@ statusUpdate(false);
  */
 });
 
-;
+;require.register("web/static/js/stores/SocketStore", function(exports, require, module) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+var _vendorPhoenix = require("../../vendor/phoenix");
+
+var _bower_componentsRefluxDistReflux = require("bower_components/reflux/dist/reflux");
+
+var _bower_componentsRefluxDistReflux2 = _interopRequireDefault(_bower_componentsRefluxDistReflux);
+
+var _Actions = require("../Actions");
+
+var _Actions2 = _interopRequireDefault(_Actions);
+
+exports["default"] = _bower_componentsRefluxDistReflux2["default"].createStore({
+  listenables: _Actions2["default"],
+
+  init: function init() {
+    this.connected = false;
+    this._socket = new _vendorPhoenix.Socket("/chat/ws");
+    this._socket.connect();
+    this._socket.onOpen(this.onSocketOpen);
+    this._socket.onClose(this.onSocketClose);
+    this._socket.onError(this.onSocketClose);
+  },
+
+  getInitialState: function getInitialState() {
+    return this;
+  },
+
+  onJoin: function onJoin(channelName) {
+    var chan = this._socket.chan(channelName, {});
+
+    chan.join().receive("ok", function () {
+      _Actions2["default"].joined(channelName, chan);
+    });
+  },
+
+  onSocketOpen: function onSocketOpen() {
+    this.connected = true;
+    this.trigger(this);
+  },
+
+  onSocketClose: function onSocketClose() {
+    this.connected = false;
+    this.trigger(this);
+  }
+});
+module.exports = exports["default"];
+});
+
+
 //# sourceMappingURL=app.js.map

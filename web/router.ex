@@ -20,8 +20,13 @@ defmodule Phorechat.Router do
     get "/newuser",IndexController, :newuser
   end
 
+  socket "/chat/ws", Chat, via: [Phoenix.Transports.WebSocket] do
+    channel "chat", ChatChannel
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", Phorechat do
   #   pipe_through :api
   # end
+
 end
