@@ -33637,24 +33637,97 @@ var _storesSocketStore = require("./stores/SocketStore");
 
 var _storesSocketStore2 = _interopRequireDefault(_storesSocketStore);
 
+var _Actions = require("./Actions");
+
+var _Actions2 = _interopRequireDefault(_Actions);
+
 exports["default"] = _bower_componentsReactReact2["default"].createClass({
   displayName: "ChatApp",
 
   mixins: [_bower_componentsRefluxDistReflux2["default"].connect(_storesSocketStore2["default"], "socket")],
-
+  getInitialState: function getInitialState() {
+    var name = "no name";
+    var url = window.location.href;
+    var name = url.split('?')[1].split('=')[1];
+    console.log("url", url);
+    _Actions2["default"].join("foo");
+    return {
+      name: name,
+      text: "",
+      messages: [{ from: "Local System", text: "Welcome: " + name }]
+    };
+  },
   render: function render() {
 
     return _bower_componentsReactReact2["default"].createElement(
       "div",
       null,
-      " react works? "
+      _bower_componentsReactReact2["default"].createElement(
+        "h2",
+        null,
+        "PhoReChat"
+      ),
+      _bower_componentsReactReact2["default"].createElement(
+        "button",
+        { className: "btn btn-xs" },
+        this.state.name
+      ),
+      "Enter Message: ",
+      _bower_componentsReactReact2["default"].createElement("input", { type: "text", onChange: this.handleMsgChange, value: this.state.text, onKeyDown: this.submitMsg }),
+      _bower_componentsReactReact2["default"].createElement(
+        "button",
+        { className: "btn btn-xs", onClick: this.onClick },
+        "Send!"
+      ),
+      _bower_componentsReactReact2["default"].createElement("hr", null),
+      "Messages:",
+      _bower_componentsReactReact2["default"].createElement(
+        "button",
+        { className: "btn btn-xs", onClick: this.clearMsgs },
+        "Clear msgs"
+      ),
+      _bower_componentsReactReact2["default"].createElement(
+        "ul",
+        null,
+        _bower_componentsReactReact2["default"].createElement(Msgs, { msgs: this.state.messages })
+      )
+    );
+  }
+});
+
+var Msgs = _bower_componentsReactReact2["default"].createClass({
+  displayName: "Msgs",
+
+  render: function render() {
+    return _bower_componentsReactReact2["default"].createElement(
+      "div",
+      null,
+      this.props.msgs.map(function (msg) {
+        return _bower_componentsReactReact2["default"].createElement(
+          "li",
+          null,
+          _bower_componentsReactReact2["default"].createElement(
+            "span",
+            null,
+            _bower_componentsReactReact2["default"].createElement(
+              "span",
+              { className: "badge" },
+              " ",
+              msg.from,
+              " "
+            ),
+            ": ",
+            msg.text
+          )
+        );
+      })
     );
   }
 });
 module.exports = exports["default"];
 });
 
-require.register("web/static/js/app", function(exports, require, module) {
+;require.register("web/static/js/app", function(exports, require, module) {
 "use strict";
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
