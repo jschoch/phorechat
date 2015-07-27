@@ -1,7 +1,9 @@
 defmodule Phorechat.ChatChannel do
+  require Logger
   use Phorechat.Web, :channel
 
   def join("chat:lobby", payload, socket) do
+    Logger.info "Join attempt: #{inspect payload}"
     if authorized?(payload) do
       {:ok, socket}
     else

@@ -10,7 +10,7 @@ export default React.createClass({
     var url = window.location.href;
     var name = url.split('?')[1].split('=')[1];
     console.log("url",url);
-    Actions.join("foo"); 
+    Actions.join("chat:lobby",name); 
     return({
       name: name,
       text: "",

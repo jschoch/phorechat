@@ -33650,7 +33650,7 @@ exports["default"] = _bower_componentsReactReact2["default"].createClass({
     var url = window.location.href;
     var name = url.split('?')[1].split('=')[1];
     console.log("url", url);
-    _Actions2["default"].join("foo");
+    _Actions2["default"].join("chat:lobby", name);
     return {
       name: name,
       text: "",
@@ -33903,8 +33903,8 @@ exports["default"] = _bower_componentsRefluxDistReflux2["default"].createStore({
     return this;
   },
 
-  onJoin: function onJoin(channelName) {
-    var chan = this._socket.chan(channelName, {});
+  onJoin: function onJoin(channelName, username) {
+    var chan = this._socket.chan(channelName, { username: username });
 
     chan.join().receive("ok", function () {
       _Actions2["default"].joined(channelName, chan);
