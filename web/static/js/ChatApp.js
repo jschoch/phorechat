@@ -17,6 +17,36 @@ export default React.createClass({
       messages: [{from: "Local System",text: "Welcome: "+name}]
     })
   },
+  onClick: function(event){
+    console.log("state",this.state,this.state.chan);
+    //var chan = this.state.socket._socket.chan("foo",{name: this.state.name})
+    var chan = this.state.socket.foo_chan
+    console.log("chan",chan)
+    var res = chan.push("msg",{from: this.state.name,text: this.state.text})
+    this.setState({text: ""})
+    
+  },
+  handleMsgChange: function(event){
+    this.setState({text: event.target.value})
+  },
+  handleNameChange: function(event){
+    this.setState({name: event.target.value})
+  },
+  clearMsgs: function(){
+    this.setState({messages: []});
+  },
+  setName: function(name){
+    this.setState({name: name})
+  },
+  submitMsg: function(event){
+    if(event.keyCode == 13){
+      this.onClick(event)
+    }
+  },
+  submitName: function(name){
+    this.setState({name: name})
+  },
+
   render() {
 
     return(

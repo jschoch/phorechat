@@ -33657,6 +33657,35 @@ exports["default"] = _bower_componentsReactReact2["default"].createClass({
       messages: [{ from: "Local System", text: "Welcome: " + name }]
     };
   },
+  onClick: function onClick(event) {
+    console.log("state", this.state, this.state.chan);
+    //var chan = this.state.socket._socket.chan("foo",{name: this.state.name})
+    var chan = this.state.socket.foo_chan;
+    console.log("chan", chan);
+    var res = chan.push("msg", { from: this.state.name, text: this.state.text });
+    this.setState({ text: "" });
+  },
+  handleMsgChange: function handleMsgChange(event) {
+    this.setState({ text: event.target.value });
+  },
+  handleNameChange: function handleNameChange(event) {
+    this.setState({ name: event.target.value });
+  },
+  clearMsgs: function clearMsgs() {
+    this.setState({ messages: [] });
+  },
+  setName: function setName(name) {
+    this.setState({ name: name });
+  },
+  submitMsg: function submitMsg(event) {
+    if (event.keyCode == 13) {
+      this.onClick(event);
+    }
+  },
+  submitName: function submitName(name) {
+    this.setState({ name: name });
+  },
+
   render: function render() {
 
     return _bower_componentsReactReact2["default"].createElement(
