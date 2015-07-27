@@ -1,10 +1,7 @@
-<div class="jumbotron">
-  <h2>Welcome to Phoenix!</h2>
-  <p class="lead">Most web frameworks make you choose between speed and a productive environment. <a href="http://phoenixframework.org">Phoenix</a> and <a href="http://elixir-lang.org">Elixir</a> give you both.</p>
-</div>
-
-<div class="row marketing">
-  <div class="col-lg-6">
+<div> Chat will go here </div>
+<div class="fluid-container">
+<div class="row ">
+  <div class="col-xs-6">
     <h4>Resources</h4>
     <ul>
       <li>
@@ -19,7 +16,7 @@
     </ul>
   </div>
 
-  <div class="col-lg-6">
+  <div class="col-xs-6">
     <h4>Help</h4>
     <ul>
       <li>
@@ -36,4 +33,5 @@
       </li>
     </ul>
   </div>
+</div>
 </div>
