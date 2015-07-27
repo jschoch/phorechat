@@ -1,0 +1,8 @@
+{
+  "name": "gaze",
+  "dependencies": {
+    "reflux": "~0.2.7",
+    "bootstrap": "~3.3.4",
+    "react": "~0.13.3"
+  }
+}
