@@ -4,13 +4,13 @@ import SocketStore from "./stores/SocketStore";
 import Actions from "./Actions";
 
 export default React.createClass({
-  mixins: [Reflux.connect(SocketStore, "socket")],
+  mixins: [Reflux.connect(SocketStore, "lobby")],
   getInitialState: function(){
     var name = "no name";
     var url = window.location.href;
     var name = url.split('?')[1].split('=')[1];
     console.log("url",url);
-    Actions.join("chat:lobby",name); 
+    //Actions.join("lobby",name);
     return({
       name: name,
       text: "",
@@ -19,11 +19,16 @@ export default React.createClass({
   },
   onClick: function(event){
     console.log("state",this.state,this.state.chan);
-    //var chan = this.state.socket._socket.chan("foo",{name: this.state.name})
-    var chan = this.state.socket.foo_chan
-    console.log("chan",chan)
-    var res = chan.push("msg",{from: this.state.name,text: this.state.text})
-    this.setState({text: ""})
+    
+    var chan = this.state.lobby.chan
+    if(chan){
+	var msg = {from: this.state.name,text: this.state.text}
+    	console.log("chan",chan,"sending", msg)
+
+	// send the message
+    	var res = chan.push("msg",msg);
+    	this.setState({text: ""})
+    }
     
   },
   handleMsgChange: function(event){
@@ -46,9 +51,21 @@ export default React.createClass({
   submitName: function(name){
     this.setState({name: name})
   },
-
+  componentWillMount(){
+    console.log("trying to call Actions.join",this)
+    Actions.join("lobby",this.state.name);
+  },
   render() {
 
+    // look for new messages in state
+
+    if (this.state.lobby && this.state.lobby.in_msg){
+      var msg = this.state.lobby.in_msg
+      this.state.messages.push(msg)
+      this.state.lobby.in_msg = null;
+    }else{
+      console.log("non msg update call of render");
+    }
     return(
       <div> 
 	<h2>PhoReChat</h2>

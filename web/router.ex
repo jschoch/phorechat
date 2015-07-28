@@ -21,7 +21,7 @@ defmodule Phorechat.Router do
   end
 
   socket "/chat/ws", Phorechat, via: [Phoenix.Transports.WebSocket] do
-    channel "chat:lobby", ChatChannel
+    channel "lobby", ChatChannel
   end
 
   # Other scopes may use custom stacks.
