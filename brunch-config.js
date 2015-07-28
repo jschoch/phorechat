@@ -3,13 +3,6 @@ exports.config = {
   files: {
     javascripts: {
       joinTo: 'js/app.js',
-      order: {
-        before: [
-          /^bower_components/,
-          /^web\/static\/vendor/
-        ]
-      }
-
       // To use a separate vendor.js bundle, specify two files path
       // https://github.com/brunch/brunch/blob/stable/docs/config.md#files
       // joinTo: {
@@ -25,6 +18,12 @@ exports.config = {
       //     'web/static/vendor/js/bootstrap.min.js'
       //   ]
       // }
+      order: {
+        before: [
+          /^bower_components/,
+          /^web\/static\/vendor/
+        ]
+      }
     },
     stylesheets: {
       joinTo: 'css/app.css'
@@ -38,11 +37,9 @@ exports.config = {
     // This option sets where we should place non-css and non-js assets in.
     // By default, we set this to '/web/static/assets'. Files in this directory
     // will be copied to `paths.public`, which is "priv/static" by default.
-    //
-    //
-    // it appears the below line breaks stuff
-    //assets: /^(web\/static\/assets)/,
-    vendor: []
+    assets: /^(web\/static\/assets)/,
+
+    vendor: [/^(web\/static\/vendor)/]
   },
 
   // Phoenix paths configuration
@@ -55,10 +52,13 @@ exports.config = {
   },
 
   // Configure your plugins
-  //plugins: {
-    //babel: {
-      //// Do not use ES6 compiler in vendor code
-      //ignore: [/^(web\/static\/vendor)/]
-    //}
-  //}
+  plugins: {
+    babel: {
+      // Do not use ES6 compiler in vendor code
+      ignore: [/^(web\/static\/vendor)|(bower_components)/]
+    }
+  },
+  npm: {
+    enabled: true
+  }
 };
