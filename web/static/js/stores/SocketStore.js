@@ -1,6 +1,4 @@
-//import {Socket} from "../../vendor/phoenix";
-//  had to put phoenix.js in /priv/statuc/js
-//
+import {Socket} from "phoenix";
 import Reflux from "bower_components/reflux/dist/reflux";
 import Actions from "../Actions";
 
@@ -15,7 +13,7 @@ export default Reflux.createStore({
 
     // this connects us to the server
     // the phoenix.js lib will manage reconnections
-    
+
     this._socket.connect();
     this._socket.onOpen(this.onSocketOpen);
     this._socket.onClose(this.onSocketClose);
