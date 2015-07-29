@@ -27,5 +27,78 @@ bower:  http://bower.io
 brunch: http://brunch.io
 
 > Warning: using these build tools takes up quite a bit of space, consider using a js cdn
+```json
+{
+  "name": "chat",
+  "dependencies": {
+    "classnames": "~2.1.1",
+    "reflux": "~0.2.7",
+    "bootstrap": "~3.3.4",
+    "react": "~0.13.3"
+  }
+}
+```
+
+Next we need to edit the bower.json
 
 
+Here is the brunch.config.js truncated a bit to focus on the critical parts.  This was tough to get correct and I needed help since I made some bad assumptions about the asset pipeline.
+
+
+
+```js
+exports.config = {
+  // See http://brunch.io/#documentation for docs.
+  files: {
+    javascripts: {
+      // This tells brunch to append all the js in web/static/js into this file
+      joinTo: 'js/app.js',
+      order: {
+        before: [
+          // This tells brunch to use <project director>/bower_components
+          // and these are added before anything else
+          /^bower_components/,
+          /^web\/static\/vendor/
+        ]
+      }
+    },
+    stylesheets: {
+      // stylesheets are also aggregated into the below file
+      joinTo: 'css/app.css'
+    },
+    templates: {
+      // i'm not exactly sure what this does
+      joinTo: 'js/app.js'
+    }
+  },
+
+  conventions: {
+    // This option sets where we should place non-css and non-js assets in.
+    // By default, we set this to '/web/static/assets'. Files in this directory
+    // will be copied to `paths.public`, which is "priv/static" by default.
+    assets: /^(web\/static\/assets)/,
+
+    vendor: [/^(web\/static\/vendor)/]
+  },
+
+  // Phoenix paths configuration
+  paths: {
+    // Which directories to watch for changes
+    watched: ["web/static", "test/static"],
+
+    // Where to compile files to
+    public: "priv/static"
+  },
+
+  // Configure your plugins
+  plugins: {
+    babel: {
+      // Do not use ES6 compiler in vendor code
+      ignore: [/^(web\/static\/vendor)|(bower_components)/]
+    }
+  },
+  npm: {
+    enabled: true
+  }
+};
+```
