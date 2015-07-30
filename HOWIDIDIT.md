@@ -28,6 +28,9 @@ brunch: http://brunch.io
 
 > Warning: using these build tools takes up quite a bit of space, consider using a js cdn
 ```json
+
+Next we need to edit the bower.json which installs our js into <project dir>/bower_components
+
 {
   "name": "chat",
   "dependencies": {
@@ -39,10 +42,9 @@ brunch: http://brunch.io
 }
 ```
 
-Next we need to edit the bower.json
 
 
-Here is the brunch.config.js truncated a bit to focus on the critical parts.  This was tough to get correct and I needed help since I made some bad assumptions about the asset pipeline.
+The brunch.config.js truncated a bit to focus on the critical parts.  This was tough to get correct and I needed help since I made some bad assumptions about the asset pipeline.
 
 
 
@@ -83,7 +85,7 @@ exports.config = {
 
   // Phoenix paths configuration
   paths: {
-    // Which directories to watch for changes
+    // Which directories to watch for changes by inotify
     watched: ["web/static", "test/static"],
 
     // Where to compile files to
@@ -113,6 +115,8 @@ bower install
 
 ```
 
+npm is node.js's package manager, and puts everything into <project dir>/node_module.  
+
 Now, despite my using --no-ecto the default generators for phoenix expect ecto.  We don't need any of that so I'd suggest you avoid using a generator and create the files by hand or clone from the commit.
 
 ## Optional testing reflux
@@ -121,7 +125,7 @@ see RFLX.md for details
 
 ##  Finally, we are ready to dig into this
 
-again, i foolishly used the generator so I had to delete some things that expected Ecto.  I've marked the stuff you need with a "+", and you may want to keep the tests
+Again, i foolishly used the generator so I had to delete some things that expected Ecto.  I've marked the stuff you need with a "+", and you may want to keep the tests
 
 ```sh
 mix phoenix.gen.html Index chat name:string
@@ -165,9 +169,10 @@ defmodule Phorechat.Router do
     plug :protect_from_forgery
   end
 
-  #  this sets the local scope.  Anything inside of the scope is relative to the first argument to scope, "/" in this case
-  #  the 2nd argument to scope sets the module name, so we don't have to type Phorechat.PageController for every route we 
-  #  want to use
+  #  This sets the local scope.  Anything inside of the scope is relative to the first argument to scope, "/" in this case.
+  #
+  #  The 2nd argument to scope sets the module name, so we don't have to type Phorechat.PageController for every route we 
+  #  want to use.
   #
   #  you can below see we send "/chat" to out IndexController's function index/2 or by convention index(conn,params)
   scope "/", Phorechat do
@@ -187,4 +192,56 @@ end
 
 I've added the channel for the web socket, added the scope and routes for /chat and /newuser.  /newuser stubbs out a landing page so we can ensure a username has been entered, and we can just have "/" go to IndexController.newuser vs PageController.index
 
-The actual commit can be found [here](https://github.com/jschoch/phorechat/commit/8fe127c745dd1ccfe664146d210f48c77d7e7b3e)
+
+The interesting bits of the commits are [index_controller.ex](https://github.com/jschoch/phorechat/blob/8fe127c745dd1ccfe664146d210f48c77d7e7b3e/web/controllers/index_controller.ex) and the changes to the [layout and template](https://github.com/jschoch/phorechat/commit/820c063fda588458da4d69f2659e827d972b07da) 
+
+
+I then added a few things to test in [this commit](https://github.com/jschoch/phorechat/blob/f49b6a877025872092d1c2308329981e927edd83/web/controllers/index_controller.ex).  Below they are explained
+
+
+```elixir
+
+defmodule Phorechat.IndexController do
+  use Phorechat.Web, :controller
+  #
+  #  Logger is a seperate application you can use to send log messages to without having to worry about it slowing your app down or 
+  #  crashing
+  #
+  require Logger
+  alias Phorechat.Index
+
+  plug :scrub_params, "index" when action in [:create, :update]
+
+  def index(conn, params) do
+    Logger.info inspect( params,pretty: true)
+    #
+    # Here we can detect the username and redirect if we do not have it.  
+    # We could also have done this as a guard
+    #      def index(conn,%{"username" => username} = params)
+    #
+    case params do
+      %{"username" => username} ->  
+        #  sends the logger a message of type info <> syntax concatenates binaries or "elixir strings"
+        Logger.info("username found for: " <> username)
+      _ -> 
+        redirect(conn, to: "/newuser") 
+          #  Very critical we tell Plug to stop processing the chain.  If we don't do this we may respond with another plug before 
+          #  the redirect happens
+          |> halt
+    end
+    render(conn, "index.html")
+  end
+  def newuser(conn,_params) do
+    # 
+    #  Note I removed render and used text instead.  text/2 takes a conn and a string and doesn't need any template.  This is
+    #  great to test with
+    #
+    #render(conn,_params)
+    text  conn, "new user goes here"
+  end
+
+end
+```
+
+
+
