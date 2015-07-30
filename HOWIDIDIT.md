@@ -121,4 +121,31 @@ see RFLX.md for details
 
 ##  Finally, we are ready to dig into this
 
+again, i foolishly used the generator so I had to delete some things that expected Ecto.  I've marked the stuff you need with a "+", and you may want to keep the tests
 
+```sh
+mix phoenix.gen.html Index chat name:string
+* creating priv/repo/migrations/20150727144034_create_index.exs
+* creating web/models/index.ex
+* creating test/models/index_test.exs
+
++   * creating web/controllers/index_controller.ex
+
+* creating web/templates/index/edit.html.eex
+* creating web/templates/index/form.html.eex
+
++   * creating web/templates/index/index.html.eex
+
+* creating web/templates/index/new.html.eex
+* creating web/templates/index/show.html.eex
+
++   * creating web/views/index_view.ex
+
+* creating test/controllers/index_controller_test.exs
+
+```
+
+
+## Some basics on Phoenix:
+
+The request flow goes something like: ![alt phoenix framework flow](http://brng.us/images/flow.png)
