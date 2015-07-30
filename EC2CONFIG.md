@@ -54,6 +54,7 @@ mix phoenix.new phorechat --no-ecto
 # Optional
 ```sh
 #  some effort to get port 80 forwarded, used iptables rules
+#  ignore the fail2ban stuff
 sudo service iptables status
 Table: filter
 Chain INPUT (policy ACCEPT)

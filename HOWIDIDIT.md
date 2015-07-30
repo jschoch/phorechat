@@ -102,3 +102,23 @@ exports.config = {
   }
 };
 ```
+
+
+install npm and bower stuff
+
+```sh
+
+npm install
+bower install
+
+```
+
+Now, despite my using --no-ecto the default generators for phoenix expect ecto.  We don't need any of that so I'd suggest you avoid using a generator and create the files by hand or clone from the commit.
+
+## Optional testing reflux
+
+see RFLX.md for details
+
+##  Finally, we are ready to dig into this
+
+
