@@ -149,3 +149,42 @@ mix phoenix.gen.html Index chat name:string
 ## Some basics on Phoenix:
 
 The request flow goes something like: ![alt phoenix framework flow](http://brng.us/images/flow.png)
+
+Let's start with the router, which is controled in web/router.ex
+
+```elixir
+defmodule Phorechat.Router do
+  # this has all the stuff we need to use like conn scope and get
+  use Phorechat.Web, :router
+
+  #  pipe_through uses the pipeline below to chain plug/2 methods which get a conn map, and a params map
+  pipeline :browser do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_flash
+    plug :protect_from_forgery
+  end
+
+  #  this sets the local scope.  Anything inside of the scope is relative to the first argument to scope, "/" in this case
+  #  the 2nd argument to scope sets the module name, so we don't have to type Phorechat.PageController for every route we 
+  #  want to use
+  #
+  #  you can below see we send "/chat" to out IndexController's function index/2 or by convention index(conn,params)
+  scope "/", Phorechat do
+    pipe_through :browser # Use the default browser stack
+
+    get "/", PageController, :index
+    get "/chat", IndexController, :index
+    get "/newuser",IndexController, :newuser
+  end
+
+  #  this sets up our web socket
+  socket "/chat/ws", Phorechat, via: [Phoenix.Transports.WebSocket] do
+    channel "lobby", ChatChannel
+  end
+end
+```
+
+I've added the channel for the web socket, added the scope and routes for /chat and /newuser.  /newuser stubbs out a landing page so we can ensure a username has been entered, and we can just have "/" go to IndexController.newuser vs PageController.index
+
+The actual commit can be found [here](https://github.com/jschoch/phorechat/commit/8fe127c745dd1ccfe664146d210f48c77d7e7b3e)
