@@ -1,6 +1,12 @@
 # How to tutorial wiring up a Phoenix Channels, and Reflux chat app
 ##Part 4: Phoenix + Reflux
 
+
+* [Understanding Sockets](#sockets)
+* 
+
+### Sockets 
+
 I started this with hacking chat into [gaze](https://github.com/ericmj/gaze) which displays some system information from your erlang vm.
 
 The [SocketStore.js](https://github.com/ericmj/gaze/blob/master/web/static/js/stores/SocketStore.js) has all the goodies for getting a phoenix channel updating a reflux store.
