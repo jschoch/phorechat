@@ -14,9 +14,14 @@ defmodule Phorechat.IndexController do
     end
     render(conn, "index.html")
   end
+  def newuser(conn,%{"username"  => username} = params) do
+    Logger.info(inspect conn)
+    text conn, "username was: " <> params["username"]
+  end
   def newuser(conn,_params) do
-    #render(conn,_params)
-    text  conn, "new user goes here"
+    render(conn,"new.html")
+    #redirect(conn, to: "/chat"
+    #text  conn, "new user goes here"
   end
 
 end

@@ -1,1 +1,23 @@
-<h2>New index</h2>
+<form class="form-horizontal" method="get" action="/chat">
+<fieldset>
+
+<!-- Form Name -->
+<legend>Enter a User Name to connect to PhoReChat!</legend>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="username">Name:</label>  
+  <div class="col-md-4">
+  <input id="username" name="username" type="text" placeholder="Joe User" class="form-control input-md" required="">
+  <span class="help-block">help</span>  
+  </div>
+</div>
+<!-- Button -->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="submit">Click to Chat!</label>
+  <div class="col-md-4">
+    <button id="submit" name="" class="btn btn-success">Submit</button>
+  </div>
+</div>
+</fieldset>
+</form>
