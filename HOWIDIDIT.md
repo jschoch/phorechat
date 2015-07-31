@@ -243,5 +243,26 @@ defmodule Phorechat.IndexController do
 end
 ```
 
+In [this](https://github.com/jschoch/phorechat/commit/b95ba60759da5cbc10d4a6425c1c0b5348d74170) commit I cleaned up the newuser checks and added a form for the username.
+
+now fire up Phoenix via
+
+```sh
+mix phoenix.server
+```
+
+If you want to fire up Phoenix with a REPL you can do this
+```sh
+iex -S mix phoenix.server
+```
+
+Finally, if you want to change your env, do this:
+```sh
+MIX_ENV=gamma iex -S mix phoenix.server
+```
+Part 3 will discuss the phoenix sockets and reflux
+You should be able to now go to your server /chat 
+
+
 
 
