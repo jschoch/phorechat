@@ -157,7 +157,7 @@ checking the results should look something like this:
 
 ### React Grunt Work
 
-We need to plumb up all of our React goodness.  Our [ChatApp.js](https://github.com/jschoch/phorechat/blob/f07a98f2a99ed5b2d69855bc9fe492a6124404a5/web/static/js/ChatApp.js) commit is commented below
+We need to start to plumb up all of our React goodness.  Our [ChatApp.js](https://github.com/jschoch/phorechat/blob/f07a98f2a99ed5b2d69855bc9fe492a6124404a5/web/static/js/ChatApp.js) commit is commented below
 
 ```js
 import React from "bower_components/react/react";
@@ -236,4 +236,67 @@ var Msgs = React.createClass({
     )
   }
 })
+```
+
+Now I add the handlers for clicks and input
+
+# TODO: need to refactor this quite a bit
+
+```javascript
+   },
+   
+ //
+ //  onClick triggered by clicking submit
+ //
+   
++  onClick: function(event){
++    console.log("state",this.state,this.state.chan);
+//
+//   Get our channel object from the state
+//
++    var chan = this.state.socket.foo_chan
++    console.log("chan",chan)
+//
+//   Push the text from the text input to the server
+//
++    var res = chan.push("msg",{from: this.state.name,text: this.state.text})
+//
+//   Clear the text input
+//
++    this.setState({text: ""})
++    
++  },
++  handleMsgChange: function(event){
++    this.setState({text: event.target.value})
++  },
++  handleNameChange: function(event){
++    this.setState({name: event.target.value})
++  },
+//
+// this removes the messages to reduce scroll, would be better to push them into an archive object so they 
+// don't just get deleted
+//
++  clearMsgs: function(){
++    this.setState({messages: []});
++  },
+//
+// this would allow you to change the username, though it is not used
+//
++  setName: function(name){
++    this.setState({name: name})
++  },
+/  this listens for the enter key to be pressed when focus is on the text input
++  submitMsg: function(event){
++    if(event.keyCode == 13){
++      this.onClick(event)
++    }
++  },
+//
+// also not used, but would allow you to set the name via a text input
+//
++  submitName: function(name){
++    this.setState({name: name})
++  },
++
+   render() {
 ```
