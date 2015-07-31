@@ -300,3 +300,46 @@ Now I add the handlers for clicks and input
 +
    render() {
 ```
+
+At this point you should see this error in your browser's console:
+> Uncaught TypeError: Cannot read property 'push' of undefined
+
+We need to dig into the reflux store and add the username to join, and add the route for the channel
+
+> web/channels/chat_channel.ex
+
+```elixir
+defmodule Phorechat.ChatChannel do
++  require Logger
+   use Phorechat.Web, :channel
+ 
+   def join("chat:lobby", payload, socket) do
++    Logger.info "Join attempt: #{inspect payload}"
+     if authorized?(payload) do
+       {:ok, socket}
+     else
+```
+
+> web/router.ex
+
+```elixir
+     get "/newuser",IndexController, :newuser
+   end
+ 
+-  socket "/chat/ws", Chat, via: [Phoenix.Transports.WebSocket] do
+-    channel "chat", ChatChannel
++  socket "/chat/ws", Phorechat, via: [Phoenix.Transports.WebSocket] do
++    channel "chat:lobby", ChatChannel
+   end
+ 
+   # Other scopes may use custom stacks.
+```
+
+> web/static/js/stores/SocketStore.js
+
+```javascript
+     console.log("url",url);
+-    Actions.join("foo"); 
++    Actions.join("chat:lobby",name); 
+     return({
+```
