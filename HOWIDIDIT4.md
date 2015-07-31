@@ -85,3 +85,40 @@ Here we add the socket directive for our router which sends all websocket connec
  end
  ```
 
+> web/static/js/Actions.js
+
+This is pretty straightforward, we just bind 2 actions to our store.  joined isn't actually used and just was pulled over from gaze.
+
+```diff 
++import Reflux from "bower_components/reflux/dist/reflux";
++
++export default Reflux.createActions([
++  "join",
++  "joined"
++]);
+```
+>web/static/js/ChatApp.js
+
+ChatApp sets up react, and ensures it is working.  Mixins per the reflux docs:
+
+>Methods from mixins are available as well as the methods declared in the Store. So it's possible to access store's this from >mixin, or methods of mixin from methods of store.
+
+>A nice feature of mixins is that if a store is using multiple mixins and several mixins define the same lifecycle method >(e.g. init, preEmit, shouldEmit), all of the lifecycle methods are guaranteed to be called.
+
+```js
+import React from "bower_components/react/react";
+import Reflux from "bower_components/reflux/dist/reflux";
+import SocketStore from "./stores/SocketStore";
+
+export default React.createClass({
+  // this 
+  mixins: [Reflux.connect(SocketStore, "socket")],
+
+  render() {
+
+    return(
+      <div> react works? </div>
+    )
+  }
+});
+```
