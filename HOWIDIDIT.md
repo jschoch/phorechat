@@ -243,9 +243,9 @@ defmodule Phorechat.IndexController do
 end
 ```
 
-In [this](https://github.com/jschoch/phorechat/commit/b95ba60759da5cbc10d4a6425c1c0b5348d74170) commit I cleaned up the newuser checks and added a form for the username.
+In [this](https://github.com/jschoch/phorechat/commit/b95ba60759da5cbc10d4a6425c1c0b5348d74170) commit I cleaned up the newuser checks and added a form for the username.  I used [bootsnipp](http://bootsnipp.com/forms?version=3) to create my bootstrap form.
 
-now fire up Phoenix via
+Now fire up Phoenix via
 
 ```sh
 mix phoenix.server
