@@ -111,7 +111,7 @@ import Reflux from "bower_components/reflux/dist/reflux";
 import SocketStore from "./stores/SocketStore";
 
 export default React.createClass({
-  // this 
+  // this initializes our SocketStore 
   mixins: [Reflux.connect(SocketStore, "socket")],
 
   render() {
@@ -122,3 +122,23 @@ export default React.createClass({
   }
 });
 ```
+> web/templates/index/index.html.eex
+Our index template simply provides a div to land our React rendered code into, simplified below
+```html
+<div id="chat"></div>
+```
+
+> web/static/js/app.js
+Finally app.js pulls in our ChatApp and renders via React
+
+```js
+import React from "bower_components/react/react";
+import ChatApp from "./ChatApp";
+
+React.render(
+  <ChatApp />,
+  document.getElementById("chat")
+);
+```
+
+
