@@ -123,12 +123,15 @@ export default React.createClass({
 });
 ```
 > web/templates/index/index.html.eex
+
 Our index template simply provides a div to land our React rendered code into, simplified below
+
 ```html
 <div id="chat"></div>
 ```
 
 > web/static/js/app.js
+
 Finally app.js pulls in our ChatApp and renders via React
 
 ```js
@@ -141,4 +144,7 @@ React.render(
 );
 ```
 
+checking the results should look something like this:
+
+![phoenix rendered page and phoenix server output from iex](http://brng.us/images/react.png)
 
