@@ -37,7 +37,7 @@ export default Reflux.createStore({
     this._socket.onError(this.onSocketClose);
   },
 
-  // * not sure *  This just passes the object from init()
+  //  This just passes the object from init() which is called by reflux
   getInitialState() {
     return this;
   },
@@ -67,4 +67,21 @@ export default Reflux.createStore({
 });
 ```
 
+Using this as a starting point my next [commit](https://github.com/jschoch/phorechat/commit/c73267fcecb8b6ce4f0d43f649ad07026e614db9) updates the router, adds Actions.js, ChattApp.js, a modified SocketStore.js, and the templat index.html.eex. I should have put priv/static into my .gitignore, so please ignore it unless you want to see how brunch has aggregated the assets.
+
+> web/router.js
+
+Here we add the socket directive for our router which sends all websocket connections to our [ChatChannel](https://github.com/jschoch/phorechat/blob/master/web/channels/chat_channel.ex) controller
+
+```diff
+     get "/newuser",IndexController, :newuser
+   end
+ 
++  socket "/chat/ws", Chat, via: [Phoenix.Transports.WebSocket] do
++    channel "chat", ChatChannel
++  end
++
+   
+ end
+ ```
 
