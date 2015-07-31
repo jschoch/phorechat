@@ -4,6 +4,7 @@
 
 * [Understanding Sockets](#sockets)
 * [Adding the reflux, react basics](#react-reflux-basics)
+* [React grunt work](#react-grunt-work)
 
 ### Sockets 
 
@@ -154,3 +155,85 @@ checking the results should look something like this:
 
 ![phoenix rendered page and phoenix server output from iex](http://brng.us/images/react.png)
 
+### React Grunt Work
+
+We need to plumb up all of our React goodness.  Our [ChatApp.js](https://github.com/jschoch/phorechat/blob/f07a98f2a99ed5b2d69855bc9fe492a6124404a5/web/static/js/ChatApp.js) commit is commented below
+
+```js
+import React from "bower_components/react/react";
+import Reflux from "bower_components/reflux/dist/reflux";
+import SocketStore from "./stores/SocketStore";
+import Actions from "./Actions";
+
+export default React.createClass({
+  mixins: [Reflux.connect(SocketStore, "socket")],
+  
+  //
+  //  getInitialState sets up our state for React
+  //
+
+  getInitialState: function(){
+    var name = "no name";
+    
+    // 
+    // I should be using a router, but this quick hack for pulling in the username works
+    //
+    
+    var url = window.location.href;
+    var name = url.split('?')[1].split('=')[1];
+    console.log("url",url);
+    
+    //
+    // This 'Actions.join' is what causes the phoenix socket to join the channel and to be connected to our state.
+    //
+    
+    Actions.join("foo"); 
+    return({
+      name: name,
+      text: "",
+      messages: [{from: "Local System",text: "Welcome: "+name}]
+    })
+  },
+  render() {
+
+    return(
+      <div> 
+	<h2>PhoReChat</h2>
+        <button className="btn btn-xs">{this.state.name}</button>
+        
+        Enter Message: <input type="text" onChange={this.handleMsgChange} value={this.state.text} onKeyDown={this.submitMsg}></input>
+        <button className="btn btn-xs" onClick={this.onClick}>Send!</button>
+        <hr/>
+        Messages:
+        <button className="btn btn-xs" onClick={this.clearMsgs}>Clear msgs</button>
+        <ul>
+          <Msgs msgs={this.state.messages} /> 
+        </ul>
+      </div>
+    )
+  }
+});
+
+// 
+//  This renders all messages in this.state.messages which are pushed in from reflux via the phoenix socket's 
+//    accepting a properly formatted message
+//
+
+var Msgs = React.createClass({
+  render: function(){
+    return(
+      <div>
+      {this.props.msgs.map(function(msg){
+        return ( 
+          <li>
+          <span>
+          <span className="badge"> {msg.from } </span>: {msg.text}
+          </span>
+          </li>
+        )
+      })}
+      </div>
+    )
+  }
+})
+```
