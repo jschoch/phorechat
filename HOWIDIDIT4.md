@@ -18,7 +18,7 @@ Let's disect it a bit
 // This first import for "phoenix" had me flummoxed until I worked with phoenix creator Chris McCrord.  
 //  The brunch config i use is discussed in part 3 does all the magic in our version which is a bit 
 //  different from what ericmj did here.
-import {Socket} from "../../vendor/phoenix";
+import {Socket} from "phoenix";
 import Reflux from "bower_components/reflux/dist/reflux";
 // Actions are discussed here  https://github.com/spoike/refluxjs#creating-actions
 import Actions from "../Actions";
@@ -329,7 +329,7 @@ defmodule Phorechat.ChatChannel do
 -  socket "/chat/ws", Chat, via: [Phoenix.Transports.WebSocket] do
 -    channel "chat", ChatChannel
 +  socket "/chat/ws", Phorechat, via: [Phoenix.Transports.WebSocket] do
-+    channel "chat:lobby", ChatChannel
++    channel "lobby", ChatChannel
    end
  
    # Other scopes may use custom stacks.
@@ -340,6 +340,175 @@ defmodule Phorechat.ChatChannel do
 ```javascript
      console.log("url",url);
 -    Actions.join("foo"); 
-+    Actions.join("chat:lobby",name); 
++    Actions.join("lobby",name); 
      return({
+```
+
+> web/static/js/stores/SocketStore.js
+
+I added some debugging hooks and the trigger which pushes the message to react
+
+```javascript
+onJoin(channelName,username) {
++    // called from Actions.join(channelName,username)
++    // callback generated from Actions.js
++
++    // this makes the request to join a channel
+     var chan = this._socket.chan(channelName, {username: username});
++    chan.onError( () => console.log("there was an error!") )
++    chan.onClose( () => console.log("the channel has gone away gracefully") )
++    // store the channel in the state as this.lobby
+ 
+-    chan.join().receive("ok", () => {
+-      Actions.joined(channelName, chan);
++    console.log("onJoin called for username: ",username,"channelName",channelName,"chan",chan);
++
++    chan.on("msg", data => {
++      console.log("saw msg",this,"data",data);
+//
+//  This is what pushes the message to the React state
+//
++      this.trigger({in_msg: data,chan: chan});
+     });
+-  },
+ 
+
++    chan.join().receive("ok", ({msg}) => {
++      // triggered when the server responds with an "ok" message
++      console.log("channel post join:",msg,chan);
++      })
++      .after(1000, () => console.log("Networking issue. Still waiting...",this) )
++      .receive("error",({reason}) => console.log("failed to join",reason));
++  },
+   onSocketOpen() {
+```
+
+> ChatApp.js
+
+I moved Actions.join to componentWillMount since we need to wait for the mixin's init to be called and call Socket.connect.
+
+I also add a check for new msgs in state.lobby.in_msg, if there is a new message it pushes it to messages to be rendered.
+
+```javascript
+onClick: function(event){
+     console.log("state",this.state,this.state.chan);
+-    //var chan = this.state.socket._socket.chan("foo",{name: this.state.name})
+-    var chan = this.state.socket.foo_chan
+-    console.log("chan",chan)
+-    var res = chan.push("msg",{from: this.state.name,text: this.state.text})
+-    this.setState({text: ""})
++    
++    var chan = this.state.lobby.chan
++    if(chan){
++	var msg = {from: this.state.name,text: this.state.text}
++    	console.log("chan",chan,"sending", msg)
++
++	// send the message
++    	var res = chan.push("msg",msg);
++    	this.setState({text: ""})
++    }
+     
+   },
+   handleMsgChange: function(event){
+ @@ -46,9 +51,21 @@ export default React.createClass({
+   submitName: function(name){
+     this.setState({name: name})
+   },
+-
++  componentWillMount(){
++    console.log("trying to call Actions.join",this)
++    Actions.join("lobby",this.state.name);
++  },
+   render() {
+ 
++    // look for new messages in state
++
++    if (this.state.lobby && this.state.lobby.in_msg){
++      var msg = this.state.lobby.in_msg
++      this.state.messages.push(msg)
++      this.state.lobby.in_msg = null;
++    }else{
++      console.log("non msg update call of render");
++    }
+     return(
+```
+
+A quick update to out channel controller adds a join message and a catchall if the join doens't go to the right place *has an unknown channel name *
+
+```elixir
+defmodule Phorechat.ChatChannel do
+   require Logger
+-  use Phorechat.Web, :channel
+ 
+-  def join("chat:lobby", payload, socket) do
+-    Logger.info "Join attempt: #{inspect payload}"
++  # TODO: why does this break everything?
++  # this line messed up all kinds of stuff, need to figure out why!!!!!!!!!
++  #use Phorechat.Web, :channel
++  use Phoenix.Channel
++
++  def join("lobby", payload, socket) do
+     if authorized?(payload) do
++      # announce who joined
++      Logger.info "Join authorized: #{inspect payload}"
++      send self, {:joined,payload}
+       {:ok, socket}
+     else
+       {:error, %{reason: "unauthorized"}}
+     end
+   end
++  
++  # catchall for debugging
++  def join(topic,payload,socket) do
++    Logger.error("unknown topic: " <> inspect topic <> " \npayload: " <> inspect payload)
++  end
+ 
+   # Channels can be used in a request/response fashion
+   # by sending replies to requests from the client
++  def handle_info({:joined,payload},socket) do
++    Logger.info "received join"
++    broadcast!(socket,"msg",%{from: "system",text: "user joined: #{payload["username"]}"})
++    {:noreply,socket}
++  end
+   def handle_in("ping", payload, socket) do
+     {:reply, {:ok, payload}, socket}
+   end
+ @@ -23,17 +39,37 @@ defmodule Phorechat.ChatChannel do
+     broadcast socket, "shout", payload
+     {:noreply, socket}
+   end
++  def handle_in("phx_join",map,socket) do
++    Logger.info("phx_join socket \nmap: #{inspect map}\nsocket: #{inspect socket}")
++    {:noreply, socket}
++  end
+ 
+   # This is invoked every time a notification is being broadcast
+   # to the client. The default implementation is just to push it
+   # downstream but one could filter or change the event.
+   def handle_out(event, payload, socket) do
++    Logger.info("msg being sent out: event #{inspect event}, payload #{inspect payload}")
+     push socket, event, payload
+     {:noreply, socket}
+   end
+ 
+   # Add authorization logic here as required.
+   defp authorized?(_payload) do
++    Logger.info("Auth called, returning true always, need to fix this")
+     true
+   end
++
++
++  def handle_in("msg",payload,socket) do
++    Logger.info("Msg!\n#{inspect payload}")
++    broadcast!(socket,"msg",payload)
++    {:noreply,socket}
++  end
++  
++  # this is a catch all to log any msg attempt
++
++  def handle_in(msg,payload,socket) do
++    Logger.error("unknown msg!" <> inspect msg <> "\n" <> inspect payload) 
++    {:noreply,socket}
++  end
+ end
 ```
