@@ -3,7 +3,7 @@
 
 
 * [Understanding Sockets](#sockets)
-* 
+* [Adding the reflux, react basics](#react-reflux-basics)
 
 ### Sockets 
 
@@ -72,7 +72,7 @@ export default Reflux.createStore({
   }
 });
 ```
-
+### React Reflux Basics
 Using this as a starting point my next [commit](https://github.com/jschoch/phorechat/commit/c73267fcecb8b6ce4f0d43f649ad07026e614db9) updates the router, adds Actions.js, ChattApp.js, a modified SocketStore.js, and the templat index.html.eex. I should have put priv/static into my .gitignore, so please ignore it unless you want to see how brunch has aggregated the assets.
 
 > web/router.js
